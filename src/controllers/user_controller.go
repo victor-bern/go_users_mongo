@@ -12,7 +12,7 @@ import (
 func Create(c *gin.Context) {
 	db, client := database.GetDatabase()
 	collection := db.Collection("Users")
-	var user models.UserDTO
+	var user models.User
 
 	err := c.ShouldBindJSON(&user)
 	if err != nil {
