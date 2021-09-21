@@ -7,18 +7,32 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func Create(c *gin.Context) {
 	db, client := database.GetDatabase()
 	collection := db.Collection("Users")
 	var user models.User
+	var u models.User
 
 	err := c.ShouldBindJSON(&user)
 	if err != nil {
 		c.JSON(400, gin.H{
 			"Error": err.Error(),
 		})
+		return
+	}
+
+	collection.FindOne(c, bson.D{
+		primitive.E{Key: "email", Value: user.Email},
+	}).Decode(&u)
+
+	if u.Email != "" {
+		c.JSON(400, gin.H{
+			"Error": "User already exists",
+		})
+		return
 	}
 
 	user.Password, err = helpers.GenerateHash(user.Password)
@@ -26,6 +40,7 @@ func Create(c *gin.Context) {
 		c.JSON(400, gin.H{
 			"error": err.Error(),
 		})
+		return
 	}
 
 	_, err = collection.InsertOne(c, &user)
@@ -33,6 +48,7 @@ func Create(c *gin.Context) {
 		c.JSON(400, gin.H{
 			"Error": err.Error(),
 		})
+		return
 	}
 
 	client.Disconnect(c)
@@ -53,12 +69,14 @@ func GetAll(c *gin.Context) {
 		c.JSON(400, gin.H{
 			"error": err.Error(),
 		})
+		return
 	}
 
 	if err = cursor.All(c, &users); err != nil {
 		c.JSON(400, gin.H{
 			"error": err.Error(),
 		})
+		return
 	}
 	client.Disconnect(c)
 
