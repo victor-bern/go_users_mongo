@@ -1,6 +1,8 @@
 package helpers
 
 import (
+	"net/mail"
+
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -11,4 +13,10 @@ func GenerateHash(pass string) (string, error) {
 	}
 	return string(hash), nil
 
+}
+
+func ValidateMail(m string) bool {
+	_, err := mail.ParseAddress(m)
+
+	return err == nil
 }

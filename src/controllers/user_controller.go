@@ -4,6 +4,7 @@ import (
 	"gomongo/src/database"
 	"gomongo/src/helpers"
 	"gomongo/src/models"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
@@ -24,9 +25,17 @@ func Create(c *gin.Context) {
 		return
 	}
 
+	user.Email = strings.ToLower(user.Email)
 	collection.FindOne(c, bson.D{
 		primitive.E{Key: "email", Value: user.Email},
 	}).Decode(&u)
+
+	if emailIsValid := helpers.ValidateMail(user.Email); !emailIsValid {
+		c.JSON(400, gin.H{
+			"Error": "email is not valid",
+		})
+		return
+	}
 
 	if u.Email != "" {
 		c.JSON(400, gin.H{
