@@ -6,14 +6,17 @@ import (
 	"os"
 	"time"
 
+	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
-func GetDatabase() *mongo.Client {
-	uri := fmt.Sprintf("mongodb+srv://%s:%s@teste.sy7ap.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
+func GetDatabase() (*mongo.Database, *mongo.Client) {
+	godotenv.Load()
+	uri := fmt.Sprintf("mongodb+srv://%s:%s@teste.sy7ap.mongodb.net/Teste?retryWrites=true&w=majority",
 		os.Getenv("MONGO_USER"), os.Getenv("MONGO_PASSWORD"))
+	fmt.Print(uri)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 
 	defer cancel()
@@ -27,5 +30,5 @@ func GetDatabase() *mongo.Client {
 		panic(err)
 	}
 
-	return client
+	return client.Database("teste"), client
 }
