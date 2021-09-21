@@ -11,7 +11,8 @@ func ConfigRoutes(c *gin.Engine) *gin.Engine {
 	{
 		route.Group("users")
 		{
-			route.GET("All", controllers.GetAll)
+			route.POST("login", controllers.Login)
+			route.GET("all", controllers.GetAll)
 			route.POST("create", controllers.Create)
 		}
 	}

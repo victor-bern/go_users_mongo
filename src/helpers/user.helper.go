@@ -1,14 +1,14 @@
 package helpers
 
-import "golang.org/x/crypto/bcrypt"
+import (
+	"golang.org/x/crypto/bcrypt"
+)
 
-func GenerateHash(pass []byte) ([]byte, error) {
-
-	hash, err := bcrypt.GenerateFromPassword(pass, 8)
+func GenerateHash(pass string) (string, error) {
+	hash, err := bcrypt.GenerateFromPassword([]byte(pass), 8)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
-
-	return hash, nil
+	return string(hash), nil
 
 }

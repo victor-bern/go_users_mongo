@@ -2,18 +2,17 @@ package controllers
 
 import (
 	"gomongo/src/database"
+	"gomongo/src/helpers"
 	"gomongo/src/models"
-	"log"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
-	"golang.org/x/crypto/bcrypt"
 )
 
 func Create(c *gin.Context) {
 	db, client := database.GetDatabase()
 	collection := db.Collection("Users")
-	var user models.User
+	var user models.UserDTO
 
 	err := c.ShouldBindJSON(&user)
 	if err != nil {
@@ -22,13 +21,12 @@ func Create(c *gin.Context) {
 		})
 	}
 
-	user.Password, err = bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.MaxCost)
+	user.Password, err = helpers.GenerateHash(user.Password)
 	if err != nil {
 		c.JSON(400, gin.H{
 			"error": err.Error(),
 		})
 	}
-	// user.Password = ph
 
 	_, err = collection.InsertOne(c, &user)
 	if err != nil {
@@ -58,7 +56,9 @@ func GetAll(c *gin.Context) {
 	}
 
 	if err = cursor.All(c, &users); err != nil {
-		log.Fatal(err)
+		c.JSON(400, gin.H{
+			"error": err.Error(),
+		})
 	}
 	client.Disconnect(c)
 
