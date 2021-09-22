@@ -14,5 +14,11 @@ jobs:
         # uses: AkhileshNS/heroku-deploy@79ef2ae4ff9b897010907016b268fd0f88561820
         uses: AkhileshNS/heroku-deploy@v3.12.12
         with:
-          app-name: testegolang3
-          api-key: 95bdf3d5-c101-4317-894c-cf90c75dd5ef
+          # This will be used for authentication. You can find it in your heroku homepage account settings
+          heroku_api_key: 95bdf3d5-c101-4317-894c-cf90c75dd5ef
+          # Email that you use with heroku
+          heroku_email: victor_santos.15@hotmail.com
+          # The appname to use for deploying/updating
+          heroku_app_name: testegolang3
+          # An optional buildpack to use when creating the heroku application
+          usedocker: true
