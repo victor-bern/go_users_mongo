@@ -1,10 +1,6 @@
 package models
 
-import (
-	"time"
-)
-
 type Order struct {
-	Data  time.Time `bson:"data"`
-	Items []Item    `bson:"items"`
+	Data  string `bson:"data"`
+	Items []Item `bson:"items"`
 }

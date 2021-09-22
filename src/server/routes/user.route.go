@@ -14,6 +14,7 @@ func ConfigRoutes(c *gin.Engine) *gin.Engine {
 			route.POST("login", controllers.Login)
 			route.GET("all", controllers.GetAll)
 			route.POST("create", controllers.Create)
+			route.PUT("addOrder/:id", controllers.AddOrder)
 		}
 	}
 

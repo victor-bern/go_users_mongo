@@ -5,6 +5,7 @@ import (
 	"gomongo/src/helpers"
 	"gomongo/src/models"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
@@ -93,5 +94,47 @@ func GetAll(c *gin.Context) {
 }
 
 func AddOrder(c *gin.Context) {
+	db, client := database.GetDatabase()
+	collection := db.Collection("Users")
+	var order models.Order
+	id := c.Param("id")
+	objectId, err := primitive.ObjectIDFromHex(id)
+	order.Data = time.Now().Format("02-01-2006 3:4:5pm")
+
+	if err != nil {
+		c.JSON(400, gin.H{
+			"Error": err.Error(),
+		})
+		return
+	}
+	err = c.ShouldBindJSON(&order)
+
+	if err != nil {
+		c.JSON(400, gin.H{
+			"Error": err.Error(),
+		})
+		return
+	}
+
+	update := bson.M{
+		"$push": bson.M{"orders": order},
+	}
+
+	err = collection.FindOneAndUpdate(c, bson.D{
+		primitive.E{Key: "_id", Value: objectId},
+	}, update).Err()
+
+	if err != nil {
+		c.JSON(400, gin.H{
+			"Error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"message": "Order added to user",
+	})
+
+	client.Disconnect(c)
 
 }
