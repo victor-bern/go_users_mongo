@@ -91,3 +91,7 @@ func GetAll(c *gin.Context) {
 
 	c.JSON(200, users)
 }
+
+func AddOrder(c *gin.Context) {
+
+}
