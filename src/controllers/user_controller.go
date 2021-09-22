@@ -24,7 +24,7 @@ func Create(c *gin.Context) {
 		})
 		return
 	}
-
+	user.ID = primitive.NewObjectID()
 	user.Email = strings.ToLower(user.Email)
 	collection.FindOne(c, bson.D{
 		primitive.E{Key: "email", Value: user.Email},
